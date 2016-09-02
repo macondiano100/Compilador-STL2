@@ -42,6 +42,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.mozilla.universalchardet.UniversalDetector;
 public class MainWindow extends JFrame {
@@ -145,11 +146,13 @@ public class MainWindow extends JFrame {
 		toolBar.add(btnGuardarComo);
 		
 		JSplitPane panel = new JSplitPane();
+		panel.setBorder(null);
 		panel.setResizeWeight(1.0);
 		panel.setOneTouchExpandable(true);
 		panel.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		contentPane.add(panel);
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBorder(null);
 		panel.setLeftComponent(tabbedPane);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -206,15 +209,12 @@ public class MainWindow extends JFrame {
 			try(BufferedReader reader=Files.newBufferedReader(f.toPath(),Charset.forName(charsetName)))
 			{
 				Path p = f.toPath();
-				RSyntaxTextArea textArea = new RSyntaxTextArea();
-				textArea.setPopupMenu(null);
-				textArea.addCaretListener(new Position_Updater());
-				RTextScrollPane sp = new RTextScrollPane(textArea);
+				RTextScrollPane sp = crea_scroll_pane();
 				file_to_component.put(p, sp);
 				component_to_file.put(sp, p);
 				tabbedPane.addTab(p.getFileName().toString(),sp);
 				tabbedPane.setSelectedComponent(sp);
-				textArea.read(reader,f);
+				((RTextArea)sp.getViewport().getView()).read(reader,f);
 			}
 			catch (MalformedInputException e2) {
 				JOptionPane.showMessageDialog(MainWindow.this,"Error de encoding","Error al Abrir Archivo",JOptionPane.ERROR_MESSAGE);
@@ -286,11 +286,18 @@ public class MainWindow extends JFrame {
 				}
 			}
 		}
-		public void accion_nuevo_archivo(ActionEvent e)
+		private RTextScrollPane crea_scroll_pane()
 		{
 			RSyntaxTextArea textArea = new RSyntaxTextArea();
-			RTextScrollPane sp= new RTextScrollPane(textArea);
+			textArea.setPopupMenu(null);
 			textArea.addCaretListener(new Position_Updater());
+			RTextScrollPane sp = new RTextScrollPane(textArea);
+			sp.setBorder(null);
+			return sp;
+		}
+		public void accion_nuevo_archivo(ActionEvent e)
+		{
+			RTextScrollPane sp = crea_scroll_pane();
 			tabbedPane.add("Nuevo", sp);
 			tabbedPane.setSelectedComponent(sp);
 		}
