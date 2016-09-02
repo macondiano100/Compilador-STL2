@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -152,8 +154,19 @@ public class MainWindow extends JFrame {
 		panel.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		contentPane.add(panel);
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.addContainerListener(new ContainerAdapter() {
+			@Override
+			public void componentAdded(ContainerEvent arg0) {
+				tabbedPane.setTabComponentAt(tabbedPane.getTabCount()-1,new ButtonTabComponent(tabbedPane));
+			}
+			@Override
+			public void componentRemoved(ContainerEvent arg0) {
+				fileActions.accion_cerrar_archivo(arg0);
+			}
+		});
 		tabbedPane.setBorder(null);
 		panel.setLeftComponent(tabbedPane);
+		
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
@@ -264,6 +277,10 @@ public class MainWindow extends JFrame {
 					}
 				}
 			}
+		}
+		public void accion_cerrar_archivo(ContainerEvent e)
+		{
+			file_to_component.remove(component_to_file.remove(component_to_file));
 		}
 		public void accion_guardar_archivo(ActionEvent e)
 		{
