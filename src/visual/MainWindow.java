@@ -147,6 +147,10 @@ public class MainWindow extends JFrame {
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(null);
+		contentPane.add(panel_1, BorderLayout.SOUTH);
+		
 	}
 	
 	
@@ -182,6 +186,7 @@ public class MainWindow extends JFrame {
 				file_to_component.put(p, sp);
 				component_to_file.put(sp, p);
 				tabbedPane.addTab(p.getFileName().toString(),sp);
+				tabbedPane.setSelectedComponent(sp);
 				textArea.read(reader,f);
 			}
 			catch (MalformedInputException e2) {
@@ -259,6 +264,7 @@ public class MainWindow extends JFrame {
 			RSyntaxTextArea textArea = new RSyntaxTextArea();
 			RTextScrollPane sp= new RTextScrollPane(textArea);
 			tabbedPane.add("Nuevo", sp);
+			tabbedPane.setSelectedComponent(sp);
 		}
 	}
 	
