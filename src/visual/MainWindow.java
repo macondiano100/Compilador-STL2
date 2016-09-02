@@ -1,7 +1,9 @@
 package visual;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,10 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,10 +31,15 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.Utilities;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -43,6 +53,7 @@ public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
 	private JTable table;
+	private JLabel label_caret;
 
 	/**
 	 * Launch the application.
@@ -142,14 +153,29 @@ public class MainWindow extends JFrame {
 		panel.setLeftComponent(tabbedPane);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
 		panel.setRightComponent(scrollPane);
 		
 		table = new JTable();
+		table.setBorder(null);
 		scrollPane.setViewportView(table);
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+		panel_1.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		panel_1.setBorder(null);
 		contentPane.add(panel_1, BorderLayout.SOUTH);
+		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.X_AXIS));
+		
+		Component horizontalGlue = Box.createHorizontalGlue();
+		panel_1.add(horizontalGlue);
+		
+		label_caret = new JLabel("");
+		label_caret.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		label_caret.setBorder(null);
+		label_caret.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		label_caret.setVerticalAlignment(SwingConstants.BOTTOM);
+		panel_1.add(label_caret);
 		
 	}
 	
@@ -182,6 +208,7 @@ public class MainWindow extends JFrame {
 				Path p = f.toPath();
 				RSyntaxTextArea textArea = new RSyntaxTextArea();
 				textArea.setPopupMenu(null);
+				textArea.addCaretListener(new Position_Updater());
 				RTextScrollPane sp = new RTextScrollPane(textArea);
 				file_to_component.put(p, sp);
 				component_to_file.put(sp, p);
@@ -263,9 +290,37 @@ public class MainWindow extends JFrame {
 		{
 			RSyntaxTextArea textArea = new RSyntaxTextArea();
 			RTextScrollPane sp= new RTextScrollPane(textArea);
+			textArea.addCaretListener(new Position_Updater());
 			tabbedPane.add("Nuevo", sp);
 			tabbedPane.setSelectedComponent(sp);
 		}
+	}
+	private class Position_Updater implements CaretListener{
+		private int getRow(int pos, JTextComponent editor) {
+	        int rn = (pos==0) ? 1 : 0;
+	        try {
+	            int offs=pos;
+	            while( offs>0) {
+	                offs=Utilities.getRowStart(editor, offs)-1;
+	                rn++;
+	            }
+	        } catch (BadLocationException e) {
+	            e.printStackTrace();
+	        }
+	        return rn;
+	    }
+	    private int getColumn(int pos, JTextComponent editor) {
+	        try {
+	            return pos-Utilities.getRowStart(editor, pos)+1;
+	        } catch (BadLocationException e) {
+	            e.printStackTrace();
+	        }
+	        return -1;
+	    }
+       public void caretUpdate(CaretEvent e) {
+    	   label_caret.setText("Lin. "+getRow(e.getDot(), (JTextComponent)e.getSource())+" Col. "
+       +getColumn(e.getDot(), (JTextComponent)e.getSource()));
+       }
 	}
 	
 }
