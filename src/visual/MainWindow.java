@@ -1,11 +1,18 @@
 package visual;
-
+/**TODO
+ * Vaciar tabla de errores cada nueva compilacion
+ * Desactivar botones al cambiar de archivo
+ * **/
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
+import java.awt.event.MouseAdapter;
+import java.io.IOException;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -29,6 +37,10 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
+
+import compilador.Compilador;
+import compilador.Error_info;
+import visual.tabla_errores.Modelo_Tabla_Errores;
 public class MainWindow extends JFrame {
 
 	/**
@@ -40,6 +52,11 @@ public class MainWindow extends JFrame {
 	private JTable table;
 	private JLabel label_caret;
 	private Controlador_pestanias_archivos fileActions;
+	private Modelo_Tabla_Errores modelo_Tabla_Errores;
+	private Compilador compilador;
+	private JButton btnAnalizadorSintctico;
+	private JButton btnNewButton;
+	private JButton btnAnalizadorSemantico;
 
 	/**
 	 * Launch the application.
@@ -68,26 +85,28 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		compilador=new Compilador();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 707, 412);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JButton btnNewButton = new JButton("A.L.");
-		btnNewButton.setEnabled(false);
+		btnNewButton = new JButton("A.L.");
+		btnNewButton.addActionListener(this::accion_lexico);
 		btnNewButton.setToolTipText("Analizador L\u00E9xico");
 		menuBar.add(btnNewButton);
 		
-		JButton btnAnalizadorSintctico = new JButton("A. S.");
+		btnAnalizadorSintctico = new JButton("A. S.");
+		btnAnalizadorSintctico.addActionListener(this::accion_sintactico);
 		btnAnalizadorSintctico.setEnabled(false);
 		btnAnalizadorSintctico.setToolTipText("Analizador Sint\u00E1ctico");
 		menuBar.add(btnAnalizadorSintctico);
 		
-		JButton btnAse = new JButton("A.Se.");
-		btnAse.setEnabled(false);
-		btnAse.setToolTipText("Analizador Sem\u00E1ntico");
-		menuBar.add(btnAse);
+		btnAnalizadorSemantico = new JButton("A.Se.");
+		btnAnalizadorSemantico.setEnabled(false);
+		btnAnalizadorSemantico.setToolTipText("Analizador Sem\u00E1ntico");
+		menuBar.add(btnAnalizadorSemantico);
 		
 		JButton btnGi = new JButton("G.I.");
 		btnGi.setEnabled(false);
@@ -139,6 +158,12 @@ public class MainWindow extends JFrame {
 		table.setBorder(null);
 		scrollPane.setViewportView(table);
 		
+		
+		
+		modelo_Tabla_Errores=new Modelo_Tabla_Errores();
+		table.setModel(modelo_Tabla_Errores);
+		table.addMouseListener(new Mouse_Adapter_Tabla_Errores());
+		
 		JPanel panel_1 = new JPanel();
 		panel_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		panel_1.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -181,13 +206,26 @@ public class MainWindow extends JFrame {
 		
 	}
 
-	private class Position_Status_Updater implements CaretListener{
-       public void caretUpdate(CaretEvent e) {
-    	   label_caret.setText("Lin. "+getRow(e.getDot(), (JTextComponent)e.getSource())+" Col. "
-       +getColumn(e.getDot(), (JTextComponent)e.getSource()));
-       }
+	private void accion_lexico(ActionEvent e)
+	{
+		try {
+			compilador.inicia_parseo(fileActions.get_active_file());
+			modelo_Tabla_Errores.add_items(compilador.get_errores_lexicos());
+			if(compilador.get_errores_lexicos().isEmpty())btnAnalizadorSintctico.setEnabled(true);
+		} catch (IOException e1) {
+			show_exception(e1);
+		}
 	}
-	
+	private void accion_sintactico(ActionEvent e)
+	{
+		List<Error_info> errores_sintacticos=compilador.get_errores_sintacticos();
+		modelo_Tabla_Errores.add_items(errores_sintacticos);
+		if(errores_sintacticos.isEmpty()) btnAnalizadorSemantico.setEnabled(true);
+	}
+	public void show_exception(Exception e)
+	{
+		JOptionPane.showMessageDialog(this, e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+	}
 	//helper functions for carets
 	private static int getRow(int pos, JTextComponent editor) {
         int rn = (pos==0) ? 1 : 0;
@@ -210,5 +248,29 @@ public class MainWindow extends JFrame {
         }
         return -1;
     }
+    public class Mouse_Adapter_Tabla_Errores extends MouseAdapter{
+	    @Override
+	    public void mouseClicked(java.awt.event.MouseEvent evt) {
+	        int row = table.rowAtPoint(evt.getPoint());
+	        if (row >= 0) {
+				Error_info error_info = modelo_Tabla_Errores.getValueAt(table.getSelectedRow());
+	        	try {
+					int pos=fileActions.get_active_text_area().getTextArea().getLineStartOffset(error_info.row-1)+error_info.col;
+				fileActions.posiciona_caret(error_info.path, 
+						pos-1);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+
+	        }
+	    }
+	}
+
+	private class Position_Status_Updater implements CaretListener{
+       public void caretUpdate(CaretEvent e) {
+    	   label_caret.setText("Lin. "+getRow(e.getDot(), (JTextComponent)e.getSource())+" Col. "
+       +getColumn(e.getDot(), (JTextComponent)e.getSource()));
+       }
+	}
 	
 }

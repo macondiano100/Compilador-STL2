@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="target/generated-sources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Users/Antonio/.p2/pool/plugins/org.eclipse.osgi_3.11.0.v20160603-1336.jar" sourcepath="C:/Users/Antonio/.p2/pool/plugins/org.eclipse.osgi_3.11.0.v20160603-1336.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Antonio/.p2/pool/plugins/org.eclipse.core.commands_3.8.0.v20160316-1921.jar" sourcepath="C:/Users/Antonio/.p2/pool/plugins/org.eclipse.core.commands_3.8.0.v20160316-1921.jar"/>
@@ -20,5 +21,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Antonio/Dropbox/VII Semestre/Seminario de Traductores/Compilador/src/librerias/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/ANTLR/antlr-4.5.3-complete.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/ANTLR/antlr-runtime-4.5.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

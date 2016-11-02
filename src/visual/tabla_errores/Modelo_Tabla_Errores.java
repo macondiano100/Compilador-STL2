@@ -1,9 +1,12 @@
 package visual.tabla_errores;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
+
+import compilador.Error_info;
 
 public class Modelo_Tabla_Errores extends AbstractTableModel {
 	enum Column_Info_Errores
@@ -16,16 +19,28 @@ public class Modelo_Tabla_Errores extends AbstractTableModel {
 			COL_CLASS = cOL_CLASS;
 		}
 	}
-	private List<error_info> errores;
+	private List<Error_info> errores;
 	public Modelo_Tabla_Errores(){
 		 errores=new ArrayList<>();
 	}
-	public void add_item(error_info error)
+	public void add_items(Collection<Error_info> errores)
+	{
+		int previous_size=this.errores.size();
+		this.errores.addAll(errores);
+		fireTableRowsInserted(previous_size, this.errores.size()-1);
+	}
+	public void clear_table()
+	{
+		int previous_size=this.errores.size();
+		errores.clear();
+		fireTableRowsDeleted(0, previous_size-1);
+	}
+	public void add_item(Error_info error)
 	{
 		errores.add(error);
 		fireTableRowsInserted(errores.size()-1, errores.size()-1);
 	}
-	public Modelo_Tabla_Errores(List<error_info> errores) {
+	public Modelo_Tabla_Errores(List<Error_info> errores) {
 		this.errores=errores;
 	}
 	@Override
@@ -37,7 +52,7 @@ public class Modelo_Tabla_Errores extends AbstractTableModel {
 	public int getRowCount() {
 		return errores.size();
 	}
-	public error_info getValueAt(int row)
+	public Error_info getValueAt(int row)
 	{
 		return errores.get(row);
 	}
@@ -47,7 +62,7 @@ public class Modelo_Tabla_Errores extends AbstractTableModel {
 	}
 	@Override
 	public Object getValueAt(int row, int col) {
-		error_info error=errores.get(row);
+		Error_info error=errores.get(row);
 		switch (Column_Info_Errores.values()[col]) {
 		case LINEA:
 			return error.row;

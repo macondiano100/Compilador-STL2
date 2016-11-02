@@ -78,6 +78,7 @@ class Controlador_pestanias_archivos
 	{
 		file_to_component.put(new_path,(RTextScrollPane) tabbedPane.getSelectedComponent());
 		if(old_path!=null)file_to_component.remove(old_path);
+		component_to_file.put((RTextScrollPane) tabbedPane.getSelectedComponent(), new_path);
 		tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(),new_path.getFileName().toString());
 	}
 	private void save_active_file_as()
@@ -163,11 +164,12 @@ class Controlador_pestanias_archivos
 			}
 		}
 	}
-	public void posiciona_caret(Path path,int pos){
+	public void posiciona_caret(Path path,int pos){ /**TODO validar archivo abierto*/
 		if(file_to_component.containsKey(path)){
 			RTextScrollPane rTextScrollPane=file_to_component.get(path);
 			tabbedPane.setSelectedComponent(rTextScrollPane);
 			rTextScrollPane.getTextArea().setCaretPosition(pos);
+			rTextScrollPane.getTextArea().requestFocusInWindow();
 			
 		}
 	}
@@ -180,6 +182,10 @@ class Controlador_pestanias_archivos
 		RTextScrollPane sp = crea_scroll_pane();
 		tabbedPane.add("Nuevo", sp);
 		tabbedPane.setSelectedComponent(sp);
+	}
+	public RTextScrollPane get_active_text_area()
+	{
+		return (RTextScrollPane) tabbedPane.getSelectedComponent();
 	}
 	public Path get_active_file()
 	{
