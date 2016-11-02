@@ -58,7 +58,7 @@ class Controlador_pestanias_archivos
 		String charsetName = detector.getDetectedCharset()==null ?  "UTF-8":detector.getDetectedCharset();
 		try(BufferedReader reader=Files.newBufferedReader(f.toPath(),Charset.forName(charsetName)))
 		{
-			Path p = f.toPath();
+			Path p = f.toPath().toAbsolutePath();
 			RTextScrollPane sp = crea_scroll_pane();
 			file_to_component.put(p, sp);
 			component_to_file.put(sp, p);
@@ -180,5 +180,9 @@ class Controlador_pestanias_archivos
 		RTextScrollPane sp = crea_scroll_pane();
 		tabbedPane.add("Nuevo", sp);
 		tabbedPane.setSelectedComponent(sp);
+	}
+	public Path get_active_file()
+	{
+		return component_to_file.get(tabbedPane.getSelectedComponent());
 	}
 }
