@@ -41,6 +41,7 @@ import javax.swing.text.Utilities;
 import compilador.Compilador;
 import compilador.Error_info;
 import visual.tabla_errores.Modelo_Tabla_Errores;
+import java.awt.event.ActionListener;
 public class MainWindow extends JFrame {
 
 	/**
@@ -104,6 +105,7 @@ public class MainWindow extends JFrame {
 		menuBar.add(btnAnalizadorSintctico);
 		
 		btnAnalizadorSemantico = new JButton("A.Se.");
+		btnAnalizadorSemantico.addActionListener(this::accion_semantico);
 		btnAnalizadorSemantico.setEnabled(false);
 		btnAnalizadorSemantico.setToolTipText("Analizador Sem\u00E1ntico");
 		menuBar.add(btnAnalizadorSemantico);
@@ -221,6 +223,14 @@ public class MainWindow extends JFrame {
 		List<Error_info> errores_sintacticos=compilador.get_errores_sintacticos();
 		modelo_Tabla_Errores.add_items(errores_sintacticos);
 		if(errores_sintacticos.isEmpty()) btnAnalizadorSemantico.setEnabled(true);
+	}
+
+	private void accion_semantico(ActionEvent e)
+	{
+		compilador.inicia_semantico();
+		List<Error_info> errores_semanticos=compilador.get_errores_semanticos();
+		modelo_Tabla_Errores.add_items(errores_semanticos);
+		//if(errores_sintacticos.isEmpty()) btnAnalizadorSemantico.setEnabled(true);
 	}
 	public void show_exception(Exception e)
 	{

@@ -1,3 +1,3 @@
-en@ero sleph;
-sleph=0+4*5;
-aleph=a;
+entero c=5;
+entero a=4+g+0+4*5;
+real b=x+0+4*5*a;

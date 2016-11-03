@@ -6,3 +6,5 @@
 /ProgramaParser.java
 /LexerRules.java
 /LexerRules.tokens
+/ProgramaBaseVisitor.java
+/ProgramaVisitor.java
