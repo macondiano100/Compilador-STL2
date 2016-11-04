@@ -1,8 +1,4 @@
 package visual;
-/**TODO
- * Vaciar tabla de errores cada nueva compilacion
- * Desactivar botones al cambiar de archivo
- * **/
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -41,7 +37,6 @@ import javax.swing.text.Utilities;
 import compilador.Compilador;
 import compilador.Error_info;
 import visual.tabla_errores.Modelo_Tabla_Errores;
-import java.awt.event.ActionListener;
 public class MainWindow extends JFrame {
 
 	/**
@@ -135,6 +130,7 @@ public class MainWindow extends JFrame {
 		panel.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		contentPane.add(panel);
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.addChangeListener((e)->reinicia_interfaz_compilador());
 		
 		fileActions = new Controlador_pestanias_archivos(this,tabbedPane);
 		fileActions.add_caret_listener(new Position_Status_Updater());
@@ -182,7 +178,6 @@ public class MainWindow extends JFrame {
 		label_caret.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		label_caret.setVerticalAlignment(SwingConstants.BOTTOM);
 		panel_1.add(label_caret);
-		
 
 		
 		JButton btnAbrir = new JButton("Abrir");
@@ -231,6 +226,12 @@ public class MainWindow extends JFrame {
 		List<Error_info> errores_semanticos=compilador.get_errores_semanticos();
 		modelo_Tabla_Errores.add_items(errores_semanticos);
 		//if(errores_sintacticos.isEmpty()) btnAnalizadorSemantico.setEnabled(true);
+	}
+	private void reinicia_interfaz_compilador()
+	{
+		btnAnalizadorSintctico.setEnabled(false);
+		btnAnalizadorSemantico.setEnabled(false);
+		modelo_Tabla_Errores.clear_table();
 	}
 	public void show_exception(Exception e)
 	{
