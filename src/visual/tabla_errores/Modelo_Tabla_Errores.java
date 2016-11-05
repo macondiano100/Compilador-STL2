@@ -33,7 +33,7 @@ public class Modelo_Tabla_Errores extends AbstractTableModel {
 	{
 		int previous_size=this.errores.size();
 		errores.clear();
-		fireTableRowsDeleted(0, previous_size-1);
+		if(previous_size>0)fireTableRowsDeleted(0, previous_size-1);
 	}
 	public void add_item(Error_info error)
 	{
