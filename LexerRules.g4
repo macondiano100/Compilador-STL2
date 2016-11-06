@@ -21,11 +21,23 @@ REAL_T:'real';
 LARGO_T:'largo';
 DOBLE_T:'doble';
 VACIO_T:'vacio';
-
+//palabras reservadas
+ELSE:'sino';
+SI:'si';
+ENTONCES:'entonces';
+TERMINA_SI:'termina_si';
 //operadores
 OP_SUMA:('+'|'-');
 OP_MUL:('*'|'/');
-
+OP_AND:'y';
+OP_OR:'o';
+OP_NEG:'!';
+OP_EQUAL:'==';
+OP_GTE:'>=';
+OP_LTE:'<=';
+OP_GT:'>';
+OP_LT:'<';
+OP_ASIGNACION:'=';
 //literales
 INT: [0-9]+;		
 FLOAT: [0-9]'.'[0-9];

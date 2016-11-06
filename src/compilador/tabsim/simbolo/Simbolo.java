@@ -2,6 +2,8 @@ package compilador.tabsim.simbolo;
 import java.io.Serializable;
 import java.nio.file.Path;
 
+import antlr4.ProgramaParser.Tipo_datoContext;
+import compilador.TIPO_DATO;
 import compilador.tabsim.Scope;
 
 
@@ -15,7 +17,7 @@ public class Simbolo implements Serializable{
 	private String token;
 	private String valorIniciail;
 	private String valorFinal;
-	private String tipoIdenficador;
+	private TIPO_DATO tipoIdenficador;
 	private String posMemoria;
 	private Scope scope;
 	public int getNumeroLinea() {
@@ -43,10 +45,10 @@ public class Simbolo implements Serializable{
 	public void setValorFinal(String valorFinal) {
 		this.valorFinal = valorFinal;
 	}
-	public String getTipoIdenficador() {
+	public TIPO_DATO getTipoIdenficador() {
 		return tipoIdenficador;
 	}
-	public void setTipoIdenficador(String tipoIdenficador) {
+	public void setTipoIdenficador(TIPO_DATO tipoIdenficador) {
 		this.tipoIdenficador = tipoIdenficador;
 	}
 	public String getPosMemoria() {

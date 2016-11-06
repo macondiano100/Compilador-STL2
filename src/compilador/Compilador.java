@@ -36,7 +36,7 @@ public class Compilador {
 		parser.removeErrorListeners();
 		my_Syntax_Error_Listener = new My_Syntax_Error_Listener();
 		parser.addErrorListener(my_Syntax_Error_Listener);
-		parse_tree = parser.prog();
+		parse_tree = parser.bloque();
 	}
 	public List<Error_info> get_errores_lexicos()
 	{
